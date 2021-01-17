@@ -9,6 +9,8 @@ options {
 
   listen-on             { {{ ansible_host }}; };
   allow-transfer        { none; };
+
+  max-cache-size        {{ named_max_cache_size }}m;
 };
 
 zone "localhost" { type master; file "/etc/bind/db.local"; };
