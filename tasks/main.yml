@@ -1,0 +1,39 @@
+---
+- name: install necessary packages
+  apt:
+    name: bind9
+    force_apt_get: yes
+    update_cache: yes
+
+- name: change the daemon options for bind
+  lineinfile:
+    path: /etc/default/bind9
+    regexp: '^OPTIONS='
+    line: 'OPTIONS="-4 -u bind"'
+
+- name: replace config files with prepared tempaltes
+  template:
+    src: named.conf.j2
+    dest: /etc/bind/named.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: add necessary directories
+  file:
+    path: /etc/bind/zones
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: add necessary zone files
+  template:
+    src: "{{ item.template }}"
+    dest: "/etc/bind/zones/{{ item.template | basename | splitext | first }}"
+    owner: root
+    group: root
+    mode: '0644'
+  with_items: "{{ named_zones }}"
+  notify:
+    - restart named service

@@ -1,0 +1,4 @@
+---
+named_zones:
+  - zone: zone "ingrow.org" { type master; file "/etc/bind/zones/ingrow.org"; allow-query { any; }; allow-transfer { none; }; };
+    template: nameservers/zones/some-site.org.j2
